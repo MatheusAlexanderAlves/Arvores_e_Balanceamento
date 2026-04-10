@@ -1,50 +1,87 @@
 package arvorebalanceamento;
 
 public class BST {
-    class Node {
-        int key;
-        Node left, right;
 
-        Node(int key) {
-            this.key = key;
-            left = right = null;
-        }
-    }
+	class Node {
+		int key;
+		Node left, right;
 
-    private Node root;
+		Node(int key) {
+			this.key = key;
+		}
+	}
 
-    public BST() {
-        root = null;
-    }
+	private Node root;
 
-    // Inserção
-    public void insert(int key) {
-        root = insertRec(root, key);
-    }
+	public void insert(int key) {
+		root = insertRec(root, key);
+	}
 
-    private Node insertRec(Node root, int key) {
-        if (root == null) {
-            root = new Node(key);
-            return root;
-        }
-        if (key < root.key)
-            root.left = insertRec(root.left, key);
-        else if (key > root.key)
-            root.right = insertRec(root.right, key);
-        return root;
-    }
+	private Node insertRec(Node node, int key) {
+		if (node == null)
+			return new Node(key);
 
-    // Impressão em ordem para testar
-    public void inorder() {
-        inorderRec(root);
-    }
+		if (key < node.key)
+			node.left = insertRec(node.left, key);
+		else if (key > node.key)
+			node.right = insertRec(node.right, key);
 
-    private void inorderRec(Node root) {
-        if (root != null) {
-            inorderRec(root.left);
-            System.out.print(root.key + " ");
-            inorderRec(root.right);
-        }
-    }
+		return node;
+	}
+
+	public boolean search(int key) {
+		return searchRec(root, key);
+	}
+
+	private boolean searchRec(Node node, int key) {
+		if (node == null)
+			return false;
+		if (node.key == key)
+			return true;
+
+		return key < node.key ? searchRec(node.left, key) : searchRec(node.right, key);
+	}
+
+	// 🔥 ADICIONADO (OBRIGATÓRIO)
+	public void remove(int key) {
+		root = removeRec(root, key);
+	}
+
+	private Node removeRec(Node node, int key) {
+		if (node == null)
+			return null;
+
+		if (key < node.key)
+			node.left = removeRec(node.left, key);
+		else if (key > node.key)
+			node.right = removeRec(node.right, key);
+		else {
+			if (node.left == null)
+				return node.right;
+			if (node.right == null)
+				return node.left;
+
+			Node min = findMin(node.right);
+			node.key = min.key;
+			node.right = removeRec(node.right, min.key);
+		}
+
+		return node;
+	}
+
+	private Node findMin(Node node) {
+		while (node.left != null)
+			node = node.left;
+		return node;
+	}
+
+	public int height() {
+		return heightRec(root);
+	}
+
+	private int heightRec(Node node) {
+		if (node == null)
+			return 0;
+		return 1 + Math.max(heightRec(node.left), heightRec(node.right));
+	}
 }
-
